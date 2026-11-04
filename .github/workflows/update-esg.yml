@@ -1,0 +1,25 @@
+
+name: ESG Website Update
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check ESG homepage
+        run: |
+          test -s index.html
+          echo "ESG homepage exists and is not empty."
+
+      - name: Check repository
+        run: |
+          echo "ESG workflow test completed."
