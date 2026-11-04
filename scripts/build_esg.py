@@ -4,6 +4,7 @@ This program does not perform autonomous policy research or legal verification.
 """
 import argparse
 import html
+import hashlib
 import json
 import re
 from datetime import date, datetime, timedelta, timezone
@@ -72,7 +73,26 @@ def render_item(item):
       <p>狀態線索：{h(item.get('status_hint', '依人工審閱資料'))}；線索不等於正式政策判定。</p>
       <p><strong>本週變化：</strong>{h(item['summary'])}</p><p><strong>為何重要：</strong>{h(item['importance'])}</p>
       {extra}<p><strong>臺灣實務影響：</strong>{h(item['taiwan_impact'])}</p>
-      <p><strong>原始來源：</strong><a href="{h(item['source_url'])}" target="_blank" rel="noopener noreferrer">{h(item['source_title'])}</a></p></article>'''
+      <p><strong>原始來源：</strong><a href="{h(item['source_url'])}" target="_blank" rel="noopener noreferrer">{h(item['source_title'])}</a></p>
+      <p class="muted">蒐集方式：{h(item.get('collection_method','官方 RSS／列表自動擷取'))}</p></article>'''
+
+def sync_latest(site, reports):
+    dates=sorted(f.stem for f in reports.glob('????-??-??.json') if (reports/(f.stem+'.html')).exists())
+    if not dates: return
+    newest=dates[-1]
+    data=json.loads((reports/(newest+'.json')).read_text(encoding='utf-8'))
+    reports.joinpath('latest.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    reports.joinpath('latest.html').write_bytes((reports/(newest+'.html')).read_bytes())
+    home=site/'index.html'
+    if not home.exists(): return
+    text=home.read_text(encoding='utf-8')
+    begin='<!-- ESG-DASHBOARD:START -->'; end='<!-- ESG-DASHBOARD:END -->'
+    if begin not in text or end not in text: return
+    cards='\n'.join(f'<article class="card"><span class="tag">{h(i["announcement_date"])} · 狀態待確認</span><h3>{h(i["title"])}</h3><p>{h(i["summary"][:180])}{"…" if len(i["summary"])>180 else ""}</p><p><strong>追蹤重點：</strong>{h(i.get("status_hint","待確認"))}</p><a href="{h(i["source_url"])}" target="_blank" rel="noopener noreferrer">官方原文</a></article>' for i in data['items'])
+    failed=sum(s['status']=='failed' for s in data.get('coverage',[]))
+    content=f'<p>最新期別：{h(newest)} · 收錄 {len(data["items"])} 則官方資訊 · 自動來源失敗 {failed} 個</p><div class="notice">資料為官方資訊摘要，不代表本站完成政策法律查證。擷取失敗與網頁補充會分別揭露。</div><p><a href="reports/{h(newest)}.html">閱讀完整週報與學習重點 →</a></p><div class="grid">{cards or "本期尚無符合條件的資訊。"}</div>'
+    text=text.split(begin)[0]+begin+'\n'+content+'\n'+end+text.split(end,1)[1]
+    home.write_text(text,encoding='utf-8',newline='\r\n')
 
 def main():
     cli=argparse.ArgumentParser()
@@ -91,6 +111,7 @@ def main():
     name=f'{end.isoformat()}.html'
     # One immutable issue per Taipei calendar date, including manual reruns.
     if (reports/name).exists() and not args.replace_existing:
+        sync_latest(site,reports)
         print(f'SKIP: {name} already published; archive preserved')
         return
     cards=''.join(render_item(i) for i in items)
@@ -99,18 +120,26 @@ def main():
     intro=f'<h2>每週政策週報｜{start.isoformat()} 至 {end.isoformat()}</h2><p class="muted">收錄 {len(items)} 項資訊。依來源發布日期歸入本週；發布日期不等於法規公告或生效日期。</p>'
     intro += '<div class="panel"><strong>重要提醒：</strong>官方資訊自動蒐集與規則初檢，並非人工查證。生效日期未知時不推定政策已生效。</div>'
     if data.get('coverage'):
-        rows=''.join(f'<li>{h(s["name"])}：{h(s["status"])}；可見筆數 {h(s.get("entries",0))}；排除異常 {h(s.get("rejected",0))} {h(s.get("error",""))}</li>' for s in data['coverage'])
+        rows=''.join(f'<li>{h(s["name"])}：{h(s["status"])}；可見筆數 {h(s.get("entries",0))}；排除異常 {h(s.get("rejected",0))} {h(s.get("error",""))} {h(s.get("note",""))}</li>' for s in data['coverage'])
         intro+=f'<section class="panel"><h2>來源擷取狀況</h2><ul>{rows}</ul><p>RSS／列表僅涵蓋來源當下提供的有限資料；失敗來源未完成檢查。</p></section>'
         if not any(s['status']=='ok' for s in data['coverage']):
             raise ValueError('全部來源失敗，不發布週報')
-    reports.joinpath(end.isoformat()+'.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     if data.get('learning_note'):
         note=data['learning_note']
         intro+=f'<section class="panel"><h2>本期基礎學習</h2><p>{h(note)}</p></section>'
     if data.get('question'):
         cards+=f'<section class="panel"><h2>思考題</h2><p>{h(data["question"])}</p></section>'
     report=reports/name
-    report.write_text(page('ESG 週報 '+end.isoformat(),intro+cards),encoding='utf-8')
+    rendered=page('ESG 週報 '+end.isoformat(),intro+cards)
+    if report.exists() and report.read_text(encoding='utf-8')!=rendered:
+        revision=reports/'revisions'/end.isoformat()
+        revision.mkdir(parents=True,exist_ok=True)
+        digest=hashlib.sha256(report.read_bytes()).hexdigest()[:12]
+        (revision/(digest+'.html')).write_bytes(report.read_bytes())
+        prior=report.with_suffix('.json')
+        if prior.exists(): (revision/(digest+'.json')).write_bytes(prior.read_bytes())
+    reports.joinpath(end.isoformat()+'.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+    report.write_text(rendered,encoding='utf-8')
     dates=[]
     for file in reports.glob('????-??-??.html'):
         try: dates.append(date.fromisoformat(file.stem))
@@ -118,7 +147,8 @@ def main():
     dates.sort(reverse=True)
     links=''.join(f'<li><a href="{d.isoformat()}.html">{d.isoformat()} ESG／GHG／MRV 週報</a></li>' for d in dates)
     reports.joinpath('index.html').write_text(page('ESG 歷史週報',f'<h2>歷史週報</h2><div class="panel"><ul>{links}</ul></div>'),encoding='utf-8')
+    sync_latest(site,reports)
     print(f'OK: {report} | total {len(items)} | history {len(dates)}')
-    print('注意：不會覆寫網站首頁 index.html；需另行加入 reports/index.html 連結。')
+    print('Updated report, archive index and marked homepage dashboard.')
 
 if __name__=='__main__':main()

@@ -1,0 +1,61 @@
+{
+  "collection_method": "由 Codex 於 2026-11-04 使用網頁檢索讀取官方原文並摘要補充；並非人工法律查證，也不是 Python 自動擷取成功。",
+  "items": [
+    {
+      "title": "碳費費率調整尚無共識，須補充資料續審",
+      "announcement_date": "2026-11-02",
+      "status": "unverified",
+      "status_hint": "本次費率調整仍在審議；不代表新費率已公告",
+      "source_title": "環境部氣候變遷署｜碳費費率審議會",
+      "source_url": "https://enews.moenv.gov.tw/moenv-news/zh-tw/News/14412",
+      "summary": "環境部於11月2日討論維持費率、僅調整一般費率、一般與優惠費率同步調整等三個方案，會議未形成共識。主管機關須補充經濟與產業衝擊、自主減量計畫查核及費率參考指標等資料，再續行審議。",
+      "importance": "碳費制度已在運作，但本次費率檢討尚未定案；兩者不能混為一談。",
+      "taiwan_impact": "企業可追蹤後續審議與正式公告，評估碳成本情境；不能把討論中的方案當成已確定的新費率。此為資訊整理，非個別企業適用性判定。",
+      "concepts": "GHG 排放量是碳費成本評估的基礎，計畫減量成效仍需追蹤與查核。",
+      "effective_date": null,
+      "reviewed": false
+    },
+    {
+      "title": "首件碳封存地質探勘計畫通過，尚非封存核准",
+      "announcement_date": "2026-10-30",
+      "status": "unverified",
+      "status_hint": "官方新聞述及探勘計畫通過；不是二氧化碳灌注或封存許可",
+      "source_title": "環境部氣候變遷署｜碳封存地質探勘",
+      "source_url": "https://enews.moenv.gov.tw/moenv-news/zh-tw/News/14390",
+      "summary": "環境部新聞指出，10月29日同意台塑石化麥寮地區的碳封存地質探勘計畫。探勘將取得儲集層、蓋層及潛在洩漏通道的實測資料；後續仍須依規定辦理環評，再申請封存核准。新聞亦明確說明不得進行二氧化碳灌注測試。",
+      "importance": "探勘同意與正式封存核准是不同階段；評估 CCS 進度時應分別追蹤。",
+      "taiwan_impact": "相關事業可留意場址基線、監測設計、資訊公開與後續環評程序，不能把這則新聞解讀為已可商業封存。",
+      "concepts": "CCS 是二氧化碳捕捉與封存。MRV 需要有可追溯的監測與報告資料，不能只依計畫名稱宣稱減量成果。",
+      "effective_date": null,
+      "reviewed": false
+    },
+    {
+      "title": "循環經濟產業對話：產品數位護照試運行與生命週期評估",
+      "announcement_date": "2026-11-02",
+      "status": "unverified",
+      "status_hint": "新聞說明政策推動與試運行方向；個別強制義務與日期須另查正式法規",
+      "source_title": "環境部國家環境研究院｜資源循環產官學對話",
+      "source_url": "https://enews.moenv.gov.tw/moenv-news/zh-tw/News/14404",
+      "summary": "國環院發布產官學對話成果，討論綠色設計、AI分類、稀貴金屬回收與產品數位護照。新聞指出國內產品數位護照將先試運行，採先自願後強制的推動方向；資源再利用的減碳效益應從整體生命週期評估。",
+      "importance": "企業可能需要把產品、材料、維修與回收資料串接起來；單一處理階段的排放變化不足以代表整體效益。",
+      "taiwan_impact": "可先盤點供應鏈資料、材料組成及回收流向，作為準備方向。新聞沒有列出所有適用產品或確定的強制日期，不應自行補造。",
+      "concepts": "DPP 是產品數位護照；LCA 是生命週期評估。產品環境資料與組織溫室氣體盤查的邊界不同。",
+      "effective_date": null,
+      "reviewed": false
+    },
+    {
+      "title": "國家企業環保獎展示節能、供應鏈與內部碳定價實務",
+      "announcement_date": "2026-11-02",
+      "status": "unverified",
+      "status_hint": "企業案例與頒獎資訊，非新增法規義務",
+      "source_title": "環境部綜合規劃司｜國家企業環保獎",
+      "source_url": "https://enews.moenv.gov.tw/moenv-news/zh-tw/News/14407",
+      "summary": "環境部公布本屆企業環保獎的永續實務案例，包括設備採購節能、製程改善、再生能源、供應商減碳及內部碳定價。新聞所列獲獎企業節電與再生能源使用合計減碳效益逾百萬公噸，為主管機關發布的彙整數據。",
+      "importance": "這些案例可作為 ESG 執行與資料管理的學習材料，但得獎與減碳宣稱本身不等於每一筆資料均已由本站獨立查證。",
+      "taiwan_impact": "可比較自身的能源、採購及供應鏈管理做法；獲獎企業措施不自動成為所有公司的法定要求。",
+      "concepts": "內部碳定價是企業管理工具，不能直接等同政府碳費費率。",
+      "effective_date": null,
+      "reviewed": false
+    }
+  ]
+}

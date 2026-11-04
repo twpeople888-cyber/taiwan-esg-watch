@@ -114,10 +114,34 @@ def collect(end, fixtures=None):
     return {'week_ending':end.isoformat(),'mode':'automated','items':sorted(items.values(),key=lambda x:(x['announcement_date'],x['id']),reverse=True),'coverage':coverage,
         'learning_note':'GHG 為溫室氣體；MRV 為監測、報告與查證。自動篩選不等於政策查證。'}
 
+def merge_manual(data, path):
+    """Keep dated, source-backed supplements distinct from successful live fetches."""
+    if not Path(path).exists(): return data
+    supplement=json.loads(Path(path).read_text(encoding='utf-8-sig'))
+    end=date.fromisoformat(data['week_ending']); start=end-timedelta(days=6)
+    items={canonical(i['source_url']):i for i in data['items']}
+    count=0
+    for item in supplement['items']:
+        day=date.fromisoformat(item['announcement_date'])
+        if not start<=day<=end: continue
+        url=canonical(item['source_url'])
+        if not official(url): raise ValueError('Supplement source outside allowlist')
+        item=dict(item,source_url=url,id=hashlib.sha256(url.encode()).hexdigest()[:20],
+                  collection_method=supplement['collection_method'],status='unverified',reviewed=False)
+        items[url]=item; count+=1
+    data['items']=sorted(items.values(),key=lambda i:(i['announcement_date'],i['id']),reverse=True)
+    if count:
+        data['coverage'].append({'id':'manual-supplement','name':'官方原文網頁補充','status':'supplement',
+            'entries':count,'note':supplement['collection_method']})
+        data['mode']='automated_with_web_supplement'
+    return data
+
 def main():
     p=argparse.ArgumentParser(); p.add_argument('--week-ending'); p.add_argument('--output',default='data/weekly_updates.json'); p.add_argument('--fixtures')
+    p.add_argument('--manual-input',default='data/manual_updates.json')
     a=p.parse_args(); end=date.fromisoformat(a.week_ending) if a.week_ending else datetime.now(timezone(timedelta(hours=8))).date()
     data=collect(end,a.fixtures)
+    data=merge_manual(data,a.manual_input)
     target=Path(a.output); target.parent.mkdir(parents=True,exist_ok=True)
     target.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print(json.dumps({'items':len(data['items']),'coverage':data['coverage']},ensure_ascii=False))

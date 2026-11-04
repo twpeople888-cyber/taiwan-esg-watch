@@ -42,6 +42,36 @@ class Pipeline(unittest.TestCase):
         rows=c.parse_source('<a href="https://enews.moenv.gov.tw/a">碳費 115-10-30</a>'.encode(),'html')
         self.assertEqual(len(rows),1)
         with self.assertRaises(ValueError): c.parse_source(b'Just a moment','html')
+    def test_supplement_window_and_dedup(self):
+        with tempfile.TemporaryDirectory() as t:
+            source=Path(t)/'manual.json'
+            item=dict(self.data()['items'][0],title='Supplement')
+            source.write_text(json.dumps({'collection_method':'Official web supplement','items':[item,dict(item,announcement_date='2020-01-01')]}),encoding='utf-8')
+            merged=c.merge_manual(self.data(),source)
+            self.assertEqual(len(merged['items']),1)
+            self.assertEqual(merged['items'][0]['title'],'Supplement')
+            self.assertFalse(merged['items'][0]['reviewed'])
+            self.assertEqual(merged['coverage'][2]['status'],'failed')
+            item['source_url']='https://evil.com'
+            source.write_text(json.dumps({'collection_method':'test','items':[item]}),encoding='utf-8')
+            with self.assertRaises(ValueError): c.merge_manual(self.data(),source)
+    def test_refresh_dashboard_and_revision(self):
+        with tempfile.TemporaryDirectory() as t:
+            p=Path(t); (p/'index.html').write_text('green header<!-- ESG-DASHBOARD:START --><!-- ESG-DASHBOARD:END -->learning footer')
+            source=p/'input.json'; data=self.data()
+            source.write_text(json.dumps(data),encoding='utf-8')
+            cmd=[sys.executable,str(ROOT/'scripts/build_esg.py'),'--input',str(source),'--site-dir',t,'--week-ending','2026-10-30']
+            subprocess.run(cmd,check=True,capture_output=True)
+            before=(p/'reports/2026-10-30.html').read_bytes()
+            data['items'][0]['title']='New supplement'
+            source.write_text(json.dumps(data),encoding='utf-8')
+            subprocess.run(cmd+['--replace-existing'],check=True,capture_output=True)
+            self.assertIn('New supplement',(p/'index.html').read_text(encoding='utf-8'))
+            self.assertTrue((p/'index.html').read_text(encoding='utf-8').startswith('green header'))
+            backups=list((p/'reports/revisions/2026-10-30').glob('*.html'))
+            self.assertEqual(len(backups),1)
+            self.assertEqual(backups[0].read_bytes(),before)
+            self.assertEqual((p/'reports/latest.html').read_bytes(),(p/'reports/2026-10-30.html').read_bytes())
     def test_end_to_end_local_and_rerun(self):
         with tempfile.TemporaryDirectory() as t:
             p=Path(t); (p/'index.html').write_text('original green homepage')

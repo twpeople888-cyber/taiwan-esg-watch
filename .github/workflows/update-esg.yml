@@ -3,9 +3,14 @@ on:
   schedule:
     - cron: '17 0 * * 5'
   workflow_dispatch:
+    inputs:
+      refresh_existing:
+        description: '重新抓取並更新今日週報（保留舊版備份）'
+        type: boolean
+        default: false
   push:
     branches: [main]
-    paths: ['scripts/**', 'tests/**', '.github/workflows/update-esg.yml']
+    paths: ['scripts/**', 'tests/**', 'data/manual_updates.json', '.github/workflows/update-esg.yml']
 permissions:
   contents: read
 concurrency:
@@ -25,18 +30,24 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Collect and build once per issue date
         shell: bash
+        env:
+          REFRESH_EXISTING: ${{ inputs.refresh_existing || false }}
         run: |
           END=$(TZ=Asia/Taipei date +%F)
           python scripts/collect_esg.py --week-ending "$END" --output "$RUNNER_TEMP/esg-collected.json"
-          if [ ! -f "reports/$END.html" ]; then
+          if [ ! -f "reports/$END.html" ] || [ "$REFRESH_EXISTING" = "true" ]; then
             cp "$RUNNER_TEMP/esg-collected.json" data/weekly_updates.json
-            python scripts/build_esg.py --week-ending "$END"
+            if [ "$REFRESH_EXISTING" = "true" ]; then
+              python scripts/build_esg.py --week-ending "$END" --replace-existing
+            else
+              python scripts/build_esg.py --week-ending "$END"
+            fi
           fi
       - name: Commit generated data and reports
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add data/weekly_updates.json reports/
+          git add data/weekly_updates.json reports/ index.html
           if ! git diff --cached --quiet; then
             git commit -m 'Publish official-source ESG weekly report'
             git push
