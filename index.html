@@ -74,6 +74,15 @@ footer{
   padding:25px;
 }
 footer a{color:#b7f5df}
+
+[hidden]{display:none!important}
+.filters{display:flex;flex-wrap:wrap;gap:10px}
+button{font:inherit;border:1px solid var(--green);border-radius:24px;padding:8px 16px;color:var(--dark);background:white;cursor:pointer}
+button[aria-pressed="true"]{background:var(--green);color:white}
+:focus-visible{outline:3px solid #ba780d;outline-offset:4px}
+details.card{margin:16px 0}summary{font-weight:bold;color:var(--dark);cursor:pointer;font-size:1.12rem}
+details[open] summary{border-bottom:1px solid var(--line);padding-bottom:14px}
+.timeline li{margin:10px 0}a{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -108,48 +117,87 @@ footer a{color:#b7f5df}
 
 <section id="policy">
   <h2>📑 政策狀態追蹤</h2>
-  <div class="grid">
-    <article class="card">
-      <span class="tag">政策狀態</span>
-      <h3>✅ 已正式實施</h3>
-      <p>整理已生效的相關法規、制度及實務要求。</p>
+  <p>人工整理截至 <time datetime="2026-11-04">2026 年 11 月 4 日</time>。本區為持續追蹤清單，包含既有制度；本週新訊請見上方週報。各項日期與適用對象分開列示。</p>
+  <div class="filters" role="group" aria-label="依政策狀態篩選" hidden>
+    <button type="button" data-filter="all" aria-pressed="true">全部</button>
+    <button type="button" data-filter="effective" aria-pressed="false">已正式實施</button>
+    <button type="button" data-filter="announced" aria-pressed="false">已公布尚未適用</button>
+    <button type="button" data-filter="draft" aria-pressed="false">研議中</button>
+  </div>
+  <p id="policy-count" role="status" aria-live="polite">共 4 項政策追蹤</p>
+  <div class="grid" id="policy-cards">
+    <article class="card" data-status="effective">
+      <span class="tag">已正式實施｜既有制度</span><h3>碳費制度與現行費率</h3>
+      <p>主管機關：環境部／氣候變遷署<br>費率核定：2024 年 10 月；制度實施：2025 年起。</p>
+      <p>一般費率每公噸 CO₂e 300 元，另有 100 元與 50 元優惠費率。適用對象為碳費徵收對象；優惠須符合自主減量計畫等規定，不是企業自行選用。</p>
+      <p><strong>企業準備：</strong>確認納管資格、排放資料及減量計畫，計費排放量與調整條件須依正式規定計算。</p>
+      <p><a href="https://enews.moenv.gov.tw/moenv-news/zh-tw/News/14412">環境部制度與費率說明（2026-11-02）</a> · <a href="#learn-ghg">學習排放量計算</a></p>
     </article>
-    <article class="card">
-      <span class="tag">政策狀態</span>
-      <h3>📅 已公布尚未生效</h3>
-      <p>說明未來生效日期及企業需要提前準備的事項。</p>
+    <article class="card" data-status="draft">
+      <span class="tag">研議中｜未決定調整</span><h3>碳費費率調整審議</h3>
+      <p>主管機關：環境部<br>會議／新聞發布：2026-11-02；新費率生效日：未公告。</p>
+      <p>審議會討論維持費率及兩種調整方向，尚未形成共識，須補充資料後續審。這次會議沒有核定新費率。</p>
+      <p><strong>企業影響：</strong>可評估不同碳成本情境，申報仍依現行規定，不能將討論方案當作已調漲。</p>
+      <p><a href="https://enews.moenv.gov.tw/moenv-news/zh-tw/News/14412">環境部會議說明</a> · <a href="#learn-mrv">學習排放資料管理</a></p>
     </article>
-    <article class="card">
-      <span class="tag">政策狀態</span>
-      <h3>📝 研議中／草案</h3>
-      <p>追蹤政策草案與公開諮詢，不視為已生效規定。</p>
+    <article class="card" data-status="announced">
+      <span class="tag">已公布尚未適用</span><h3>116 年度（第二屆）ESG 評鑑指標</h3>
+      <p>發布機關：臺灣證券交易所<br>發布：2026-10-30；適用：2027-01-01 至 2027-12-31。</p>
+      <p>共 72 項指標，涵蓋環境、社會及治理。對象為該年度 ESG 評鑑受評公司，結果預計於 2028 年 4 月底前公布。</p>
+      <p><strong>企業準備：</strong>對照新年度指標與評分指南，安排資料責任人及公開揭露證據；評鑑指標與法律義務應分別辨識。</p>
+      <p><a href="https://cgc.twse.com.tw/pressReleases/promoteNewsArticleCh/4642">證交所公告</a> · <a href="https://cgc.twse.com.tw/esgEvaluation/listCh">指標與指南</a> · <a href="#learn-esg">學習 ESG</a></p>
+    </article>
+    <article class="card" data-status="effective">
+      <span class="tag">已分階段實施｜既有制度</span><h3>上市櫃公司接軌 IFRS 永續揭露準則</h3>
+      <p>主管機關：金管會<br>年報準則修正：2025-11-07；分階段適用：2026／2027／2028 會計年度。</p>
+      <p>實收資本額 100 億元以上者自 2026 年度適用；50 億元以上未達 100 億元者自 2027 年度；其餘自 2028 年度。年報申報分別於次年辦理，資本額以報導期間結束日判斷。</p>
+      <p><strong>企業準備：</strong>依所屬階段建立永續相關財務資訊、治理及排放數據流程；各項過渡措施仍須逐項核對。</p>
+      <p><a href="https://cgc.twse.com.tw/latestNews/promoteNewsArticleCh/4563">主管機關提醒與適用時程</a> · <a href="#learn-standards">學習標準差異</a></p>
     </article>
   </div>
+  <div class="card timeline"><h3>政策時間線</h3><ol>
+    <li><strong>2025 年：</strong>碳費制度開始實施（既有制度）。</li>
+    <li><strong>2026 會計年度：</strong>第一階段上市櫃公司適用 IFRS 永續揭露準則，2027 年申報。</li>
+    <li><strong>2026-10-30：</strong>證交所發布 116 年度 ESG 評鑑指標。</li>
+    <li><strong>2026-11-02：</strong>碳費調整續審，新費率與生效日未定。</li>
+    <li><strong>2027-01-01：</strong>116 年度 ESG 評鑑指標開始適用。</li>
+    <li><strong>2027／2028 會計年度：</strong>第二／第三階段上市櫃公司接軌 IFRS，分別於次年申報。</li>
+  </ol></div>
 </section>
 
 <section id="learning">
   <h2>📚 ESG／GHG／MRV 學習資料庫</h2>
-  <div class="grid">
-    <article class="card">
-      <h3>🌍 ESG 基礎</h3>
-      <p>ESG 是環境（E）、社會（S）與公司治理（G）的縮寫。</p>
-      <p>學習企業如何辨識及管理永續相關風險與機會。</p>
-    </article>
-    <article class="card">
-      <h3>🏭 GHG 溫室氣體盤查</h3>
-      <p>GHG 是溫室氣體的英文縮寫。</p>
-      <p>學習活動數據、排放係數、排放量計算及盤查邊界。</p>
-    </article>
-    <article class="card">
-      <h3>🔎 MRV 管理制度</h3>
-      <p>MRV 指監測（Monitoring）、報告（Reporting）與查證（Verification）。</p>
-      <p>學習如何建立可信且可追溯的排放資訊。</p>
-    </article>
-    <article class="card">
-      <h3>🌐 國際標準</h3>
-      <p>認識 GHG Protocol、ISO 14064-1 與永續資訊揭露制度。</p>
-    </article>
-  </div>
+  <p>依序從 ESG 概念、盤查計算到資料查證，再比較規範用途。點選主題展開教材；以下為基礎教材，非本週新公告。</p>
+  <details class="card" id="learn-esg"><summary>01 · ESG 基礎：從議題到揭露</summary>
+    <h3>三個構面與重大性</h3><p>E（環境）包括氣候、能源與水；S（社會）包括員工安全、人權與供應鏈；G（治理）包括董事會監督、誠信及內控。ESG 不是單一分數，應連結公司的實際活動。</p>
+    <p>「重大性」是判斷哪些資訊值得優先揭露的原則。以 IFRS 永續揭露為例，關注可能影響企業前景、對投資人決策重要的永續風險與機會；不要把不同報導框架的重大性定義直接混用。</p>
+    <h3>入門練習</h3><p>選一家製造業，列出用電（E）、職災（S）、董事會監督（G），各寫一個衡量指標、負責單位與證據。閱讀報告時核對期間、邊界與衡量方法，再看績效是否可比較。</p>
+    <p>ESG 評鑑是依指標評估公司；永續報告或年報揭露是對外報導資訊，兩者用途與要求不同。</p>
+    <p><a href="https://cgc.twse.com.tw/esgEvaluation/listCh">證交所 ESG 評鑑資料</a> · <a href="https://www.ifrs.org/issued-standards/ifrs-sustainability-standards-navigator/">IFRS 永續揭露準則</a></p>
+  </details>
+  <details class="card" id="learn-ghg"><summary>02 · GHG 盤查：邊界、數據與計算示例</summary>
+    <h3>先決定算誰、算什麼</h3><p>GHG 指溫室氣體。組織邊界決定納入哪些公司或據點；報導期間決定統計哪一年的活動。依 GHG Protocol，範疇一為自有或控制來源的直接排放；範疇二為外購電力、蒸汽、熱與冷卻的間接排放；範疇三涵蓋其他價值鏈間接排放。</p>
+    <h3>活動數據 × 排放係數</h3><p>活動數據可來自電費單、燃料採購與儀表；排放係數描述每單位活動造成的排放量。若係數以個別氣體質量表示，還須乘全球暖化潛勢（GWP）換算 CO₂e（二氧化碳當量）；係數已是 CO₂e 時，不再重複乘 GWP。</p>
+    <p class="notice"><strong>純教學假設：</strong>用電 10,000 kWh × 假設係數 0.5 kg CO₂e/kWh ÷ 1,000 = 5 公噸 CO₂e。0.5 並非此處提供的臺灣官方年度係數；正式盤查須選擇對應年度、地區及方法的係數。</p>
+    <p><strong>最小工作表：</strong>據點 → 排放源 → 期間 → 數量與單位 → 係數及版本 → 計算結果 → 原始憑證。先統一 kg／公噸，檢查重複、漏列與估算項目。</p>
+    <p><a href="https://ghgprotocol.org/corporate-standard">GHG Protocol 企業標準</a> · <a href="https://ghgprotocol.org/scope-2-guidance">範疇二指引</a> · <a href="https://www.moenv.gov.tw/">環境部（查找適用年度官方指引）</a></p>
+  </details>
+  <details class="card" id="learn-mrv"><summary>03 · MRV：讓排放數據可以追溯與查證</summary>
+    <h3>監測 → 報告 → 查證</h3><p>Monitoring（監測）建立量測、蒐集與品質管理方法；Reporting（報告）說明邊界、方法、排放量及資料限制；Verification（查證）依適用準則，由查證人員檢查證據及重大誤述風險。</p>
+    <p><strong>實務例子：</strong>每月保存電費單及電表紀錄，核對帳單涵蓋日期與據點，將全年數據彙整到盤查清冊。記錄換表、缺值估算與係數版本；發現錯誤時保留修正紀錄，再交由查證人員追查。</p>
+    <p><strong>證據清單：</strong>組織圖、排放源清單、帳單與儀表紀錄、計算表、係數來源、內部覆核及版本紀錄。第三方查證不會取代企業建立完整盤查資料的責任；盤查結果也不等同碳權或減量額度。</p>
+    <p><strong>思考題：</strong>總用電下降，但新廠未被納入邊界，能直接宣稱減碳嗎？先比較邊界與數據完整性，再判斷。</p>
+    <p><a href="https://www.iso.org/standard/66453.html">ISO 14064-1 官方摘要</a> · <a href="https://ghgprotocol.org/corporate-standard">GHG Protocol 盤查與報導指引</a></p>
+  </details>
+  <details class="card" id="learn-standards"><summary>04 · 臺灣與國際規範：分清用途與適用對象</summary>
+    <h3>同一份數據，可能服務不同目的</h3><ul>
+      <li><strong>GHG Protocol：</strong>企業溫室氣體盤查與報導方法，使用範疇一、二、三架構。</li>
+      <li><strong>ISO 14064-1:2018：</strong>組織層級溫室氣體排放與移除的量化及報告要求；特定管理方案的要求仍需另外符合。標準全文通常須購買。</li>
+      <li><strong>IFRS S1／S2：</strong>分別處理永續相關財務資訊一般要求與氣候相關揭露；盤查是資訊基礎之一，並非整套揭露的全部。</li>
+      <li><strong>臺灣規定：</strong>環境部的納管盤查／碳費與金管會上市櫃公司揭露制度，目的、對象與時間表不同。不能以「已有 ISO 盤查」直接推論全部法定要求均已符合。</li>
+    </ul><p><strong>閱讀順序：</strong>先確認公司適用法規及年度 → 確認指定衡量方法與邊界 → 盤點與現有數據差異 → 補齊證據與揭露。方法轉換時留下對照表。</p>
+    <p><a href="https://ghgprotocol.org/corporate-standard">GHG Protocol</a> · <a href="https://www.iso.org/standard/66453.html">ISO 官方標準說明</a> · <a href="https://www.ifrs.org/issued-standards/ifrs-sustainability-standards-navigator/ifrs-s2-climate-related-disclosures/">IFRS S2</a> · <a href="https://cgc.twse.com.tw/latestNews/promoteNewsArticleCh/4563">臺灣接軌時程</a></p>
+  </details>
 </section>
 
 <section id="reports">
@@ -181,5 +229,17 @@ footer a{color:#b7f5df}
   <small>本站為資訊整理與學習用途，政策適用性以主管機關正式公告為準。</small>
 </footer>
 
+<script>
+const controls=document.querySelector('.filters');
+const cards=[...document.querySelectorAll('#policy-cards [data-status]')];
+controls.hidden=false;
+controls.addEventListener('click',event=>{
+  const button=event.target.closest('button[data-filter]');
+  if(!button)return;
+  controls.querySelectorAll('button').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+  cards.forEach(card=>card.hidden=button.dataset.filter!=='all'&&card.dataset.status!==button.dataset.filter);
+  document.querySelector('#policy-count').textContent=`顯示 ${cards.filter(card=>!card.hidden).length} 項政策追蹤`;
+});
+</script>
 </body>
 </html>

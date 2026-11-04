@@ -10,7 +10,7 @@ on:
         default: false
   push:
     branches: [main]
-    paths: ['scripts/**', 'tests/**', 'data/manual_updates.json', '.github/workflows/update-esg.yml']
+    paths: ['index.html', 'scripts/**', 'tests/**', 'data/manual_updates.json', '.github/workflows/update-esg.yml']
 permissions:
   contents: read
 concurrency:
