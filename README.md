@@ -31,7 +31,7 @@ python scripts/build_esg.py --week-ending 2026-11-06
 
 ### 手動補抓與首頁內容
 
-網站首頁「手動更新資料（管理者）」連到此儲存庫的 Actions 頁。
+管理者可直接從此儲存庫的 Actions 頁執行更新；公開首頁只提供週報閱讀連結。
 按 Run workflow，勾選「重新抓取並更新今日週報」即可重抓來源並更新同一期；
 原 HTML／JSON 會先保存於 reports/revisions/日期/，相同內容不重複備份。
 未勾選時維持同一期不覆寫。週五定時執行不會自動強制覆寫。
