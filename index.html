@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>臺灣 ESG 永續政策觀測站</title>
+<style>
+:root {
+  --green:#137b61;
+  --dark:#123d34;
+  --bg:#f3f7f5;
+  --line:#dce8e2;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,"Microsoft JhengHei",sans-serif;
+  background:var(--bg);
+  color:#20332d;
+  line-height:1.7;
+}
+header{
+  background:linear-gradient(120deg,#103e34,#188568);
+  color:white;
+  padding:50px 7%;
+}
+header h1{font-size:clamp(26px,4vw,42px);margin:0}
+header p{opacity:.9}
+nav{
+  background:white;
+  padding:15px 7%;
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  border-bottom:1px solid var(--line);
+}
+nav a{color:var(--dark);text-decoration:none;font-weight:bold}
+main{max-width:1200px;margin:auto;padding:30px 20px}
+section{margin-bottom:45px}
+h2{border-left:5px solid var(--green);padding-left:12px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:18px;
+}
+.card{
+  background:white;
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 4px 12px #163b2c08;
+}
+.card h3{color:var(--dark);margin-top:0}
+.tag{
+  display:inline-block;
+  padding:4px 10px;
+  background:#e2f3e9;
+  color:#12684d;
+  border-radius:20px;
+  font-size:13px;
+}
+a{color:var(--green)}
+.notice{
+  background:#fff;
+  border-left:4px solid #d6a34e;
+  padding:18px;
+  border-radius:8px;
+}
+footer{
+  background:var(--dark);
+  color:white;
+  text-align:center;
+  padding:25px;
+}
+footer a{color:#b7f5df}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌱 臺灣 ESG 永續政策觀測站</h1>
+  <p>Taiwan ESG · GHG · MRV Policy Watch</p>
+  <p>政策追蹤 × 溫室氣體管理 × 永續知識學習</p>
+</header>
+
+<nav>
+  <a href="#dashboard">政策儀表板</a>
+  <a href="#policy">政策追蹤</a>
+  <a href="#learning">學習資料庫</a>
+  <a href="#reports">歷史週報</a>
+  <a href="#sources">官方來源</a>
+</nav>
+
+<main>
+
+<section id="dashboard">
+  <h2>📊 本週永續政策儀表板</h2>
+  <p>追蹤臺灣 ESG、GHG、MRV 最新政策與實務發展。</p>
+  <div class="notice">
+    首頁初始化完成。尚未匯入本週經過來源查證的政策資料。
+    正式週報發布後將更新此區域。
+  </div>
+</section>
+
+<section id="policy">
+  <h2>📑 政策狀態追蹤</h2>
+  <div class="grid">
+    <article class="card">
+      <span class="tag">政策狀態</span>
+      <h3>✅ 已正式實施</h3>
+      <p>整理已生效的相關法規、制度及實務要求。</p>
+    </article>
+    <article class="card">
+      <span class="tag">政策狀態</span>
+      <h3>📅 已公布尚未生效</h3>
+      <p>說明未來生效日期及企業需要提前準備的事項。</p>
+    </article>
+    <article class="card">
+      <span class="tag">政策狀態</span>
+      <h3>📝 研議中／草案</h3>
+      <p>追蹤政策草案與公開諮詢，不視為已生效規定。</p>
+    </article>
+  </div>
+</section>
+
+<section id="learning">
+  <h2>📚 ESG／GHG／MRV 學習資料庫</h2>
+  <div class="grid">
+    <article class="card">
+      <h3>🌍 ESG 基礎</h3>
+      <p>ESG 是環境（E）、社會（S）與公司治理（G）的縮寫。</p>
+      <p>學習企業如何辨識及管理永續相關風險與機會。</p>
+    </article>
+    <article class="card">
+      <h3>🏭 GHG 溫室氣體盤查</h3>
+      <p>GHG 是溫室氣體的英文縮寫。</p>
+      <p>學習活動數據、排放係數、排放量計算及盤查邊界。</p>
+    </article>
+    <article class="card">
+      <h3>🔎 MRV 管理制度</h3>
+      <p>MRV 指監測（Monitoring）、報告（Reporting）與查證（Verification）。</p>
+      <p>學習如何建立可信且可追溯的排放資訊。</p>
+    </article>
+    <article class="card">
+      <h3>🌐 國際標準</h3>
+      <p>認識 GHG Protocol、ISO 14064-1 與永續資訊揭露制度。</p>
+    </article>
+  </div>
+</section>
+
+<section id="reports">
+  <h2>🗂️ 歷史週報</h2>
+  <div class="card">
+    <h3>週報資料庫</h3>
+    <p>目前尚無已發布的週報。</p>
+    <p>未來將依日期建立週報索引，保留政策變化及官方來源。</p>
+  </div>
+</section>
+
+<section id="sources">
+  <h2>🔗 官方資料來源</h2>
+  <div class="card">
+    <p><a href="https://www.moenv.gov.tw/" target="_blank" rel="noopener noreferrer">環境部</a></p>
+    <p><a href="https://www.fsc.gov.tw/" target="_blank" rel="noopener noreferrer">金融監督管理委員會</a></p>
+    <p><a href="https://ghgprotocol.org/" target="_blank" rel="noopener noreferrer">GHG Protocol</a></p>
+    <p><a href="https://www.ifrs.org/" target="_blank" rel="noopener noreferrer">IFRS Foundation／ISSB</a></p>
+    <p><a href="https://www.iso.org/" target="_blank" rel="noopener noreferrer">ISO 國際標準組織</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <strong>臺灣 ESG 永續政策觀測站</strong>
+  <p>ESG · GHG · MRV | 永續資訊學習與政策追蹤</p>
+  <small>本站為資訊整理與學習用途，政策適用性以主管機關正式公告為準。</small>
+</footer>
+
+</body>
+</html>
