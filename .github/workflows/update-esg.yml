@@ -1,46 +1,64 @@
-
-name: ESG Website Update
-
+name: ESG weekly collection and Pages
 on:
+  schedule:
+    - cron: '17 0 * * 5'
   workflow_dispatch:
-
+  push:
+    branches: [main]
+    paths: ['scripts/**', 'tests/**', '.github/workflows/update-esg.yml']
 permissions:
-  contents: write
-
+  contents: read
+concurrency:
+  group: esg-weekly-pages
+  cancel-in-progress: false
 jobs:
   build-report:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-
-      - name: Check ESG homepage
+          python-version: '3.12'
+      - name: Tests
+        run: python -m unittest discover -s tests -v
+      - name: Collect and build once per issue date
+        shell: bash
         run: |
-          test -s index.html
-
-      - name: Generate ESG weekly report
+          END=$(TZ=Asia/Taipei date +%F)
+          python scripts/collect_esg.py --week-ending "$END" --output "$RUNNER_TEMP/esg-collected.json"
+          if [ ! -f "reports/$END.html" ]; then
+            cp "$RUNNER_TEMP/esg-collected.json" data/weekly_updates.json
+            python scripts/build_esg.py --week-ending "$END"
+          fi
+      - name: Commit generated data and reports
         run: |
-          python scripts/build_esg.py \
-            --input data/weekly_updates.json \
-            --site-dir .
-
-      - name: Commit generated reports
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email \
-            "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add reports/
-
-          if git diff --cached --quiet; then
-            echo "No report changes to commit."
-          else
-            git commit -m "Generate ESG weekly report"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/weekly_updates.json reports/
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish official-source ESG weekly report'
             git push
           fi
+      - name: Stage entire existing public site
+        run: |
+          mkdir -p "$RUNNER_TEMP/esg-pages"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/esg-pages"
+          rm -rf "$RUNNER_TEMP/esg-pages/.github" "$RUNNER_TEMP/esg-pages/scripts" "$RUNNER_TEMP/esg-pages/tests"
+          touch "$RUNNER_TEMP/esg-pages/.nojekyll"
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: ${{ runner.temp }}/esg-pages
+  deploy:
+    needs: build-report
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

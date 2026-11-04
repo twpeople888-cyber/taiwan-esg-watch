@@ -6,12 +6,13 @@ import argparse
 import html
 import json
 import re
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
-from zoneinfo import ZoneInfo
+from collect_esg import official
 
 STATUS = {
+    'unverified': ('自動蒐集／政策狀態待確認', '#7752a2'),
     'effective': ('已正式實施', '#147d5b'),
     'announced': ('已公布尚未生效', '#9c6200'),
     'draft': ('研議中／草案', '#7752a2'),
@@ -50,7 +51,14 @@ def verify(data, beginning, ending):
         url = urlparse(item['source_url'])
         if url.scheme != 'https' or not url.netloc or url.username or url.password:
             raise ValueError(f'第 {n} 項需使用有效的 HTTPS 官方原始來源網址。')
-        # Source authority is reviewed by a human, not inferred from URL alone.
+        if not official(item['source_url']):
+            raise ValueError('來源不在官方白名單')
+        if item['status'] != 'unverified' and item.get('reviewed') is not True:
+            raise ValueError('正式政策狀態必須經人工確認')
+        if item['status']=='effective' and (not item.get('effective_date') or date.fromisoformat(item['effective_date'])>ending):
+            raise ValueError('已生效狀態與日期不一致')
+        if item['status']=='announced' and item.get('effective_date') and date.fromisoformat(item['effective_date'])<=ending:
+            raise ValueError('尚未生效狀態與日期不一致')
         out.append(item)
     return out
 
@@ -60,7 +68,8 @@ def render_item(item):
     concepts = item.get('concepts', '')
     extra = f'<p><strong>入門觀念：</strong>{h(concepts)}</p>' if concepts else ''
     return f'''<article><span class="pill" style="color:{color};border:1px solid {color}">{h(status)}</span>
-      <h3>{h(item['title'])}</h3><div class="meta"><span>公告：{h(item['announcement_date'])}</span><span>生效：{effective}</span></div>
+      <h3>{h(item['title'])}</h3><div class="meta"><span>來源發布：{h(item['announcement_date'])}</span><span>生效：{effective}</span></div>
+      <p>狀態線索：{h(item.get('status_hint', '依人工審閱資料'))}；線索不等於正式政策判定。</p>
       <p><strong>本週變化：</strong>{h(item['summary'])}</p><p><strong>為何重要：</strong>{h(item['importance'])}</p>
       {extra}<p><strong>臺灣實務影響：</strong>{h(item['taiwan_impact'])}</p>
       <p><strong>原始來源：</strong><a href="{h(item['source_url'])}" target="_blank" rel="noopener noreferrer">{h(item['source_title'])}</a></p></article>'''
@@ -70,8 +79,9 @@ def main():
     cli.add_argument('--input',default='data/weekly_updates.json')
     cli.add_argument('--site-dir',default='.')
     cli.add_argument('--week-ending',help='YYYY-MM-DD, inclusive; default: today Asia/Taipei')
+    cli.add_argument('--replace-existing',action='store_true',help='Explicit correction of an existing issue')
     args=cli.parse_args()
-    end=date.fromisoformat(args.week_ending) if args.week_ending else datetime.now(ZoneInfo('Asia/Taipei')).date()
+    end=date.fromisoformat(args.week_ending) if args.week_ending else datetime.now(timezone(timedelta(hours=8))).date()
     start=end-timedelta(days=6)
     data=json.loads(Path(args.input).read_text(encoding='utf-8-sig'))
     items=verify(data,start,end)
@@ -79,11 +89,21 @@ def main():
     reports=site/'reports'
     reports.mkdir(parents=True,exist_ok=True)
     name=f'{end.isoformat()}.html'
+    # One immutable issue per Taipei calendar date, including manual reruns.
+    if (reports/name).exists() and not args.replace_existing:
+        print(f'SKIP: {name} already published; archive preserved')
+        return
     cards=''.join(render_item(i) for i in items)
     if not cards:
-        cards='<section class="panel"><h2>本週無重大更新</h2><p>在本期資料審核範圍內，未收錄符合條件的重大政策更新。這不等於宣稱所有官方機關均無公告。</p></section>'
-    intro=f'<h2>每週政策週報｜{start.isoformat()} 至 {end.isoformat()}</h2><p class="muted">收錄 {len(items)} 項經人工確認的政策動態。以公告日期歸入本週，並分列生效日期。</p>'
-    intro += '<div class="panel"><strong>重要提醒：</strong>本頁由人工審閱的 JSON 產生；程式不會自行核實政策狀態或來源真偽。</div>'
+        cards='<section class="panel"><h2>本期未收錄符合條件的資訊</h2><p>僅代表本次來源可見範圍與關鍵字篩選結果；不等於所有官方機關均無公告。</p></section>'
+    intro=f'<h2>每週政策週報｜{start.isoformat()} 至 {end.isoformat()}</h2><p class="muted">收錄 {len(items)} 項資訊。依來源發布日期歸入本週；發布日期不等於法規公告或生效日期。</p>'
+    intro += '<div class="panel"><strong>重要提醒：</strong>官方資訊自動蒐集與規則初檢，並非人工查證。生效日期未知時不推定政策已生效。</div>'
+    if data.get('coverage'):
+        rows=''.join(f'<li>{h(s["name"])}：{h(s["status"])}；可見筆數 {h(s.get("entries",0))}；排除異常 {h(s.get("rejected",0))} {h(s.get("error",""))}</li>' for s in data['coverage'])
+        intro+=f'<section class="panel"><h2>來源擷取狀況</h2><ul>{rows}</ul><p>RSS／列表僅涵蓋來源當下提供的有限資料；失敗來源未完成檢查。</p></section>'
+        if not any(s['status']=='ok' for s in data['coverage']):
+            raise ValueError('全部來源失敗，不發布週報')
+    reports.joinpath(end.isoformat()+'.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     if data.get('learning_note'):
         note=data['learning_note']
         intro+=f'<section class="panel"><h2>本期基礎學習</h2><p>{h(note)}</p></section>'
