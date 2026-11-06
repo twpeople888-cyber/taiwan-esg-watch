@@ -1,7 +1,21 @@
 {
-  "week_ending": "2026-11-05",
+  "week_ending": "2026-11-06",
   "mode": "automated_with_web_supplement",
   "items": [
+    {
+      "id": "ece44bd5ca99241407b9",
+      "title": "金管會公布第五屆(116年)永續金融評鑑指標",
+      "announcement_date": "2026-11-05",
+      "status": "unverified",
+      "status_hint": "待人工確認",
+      "source_title": "金管會新聞稿",
+      "source_url": "https://www.fsc.gov.tw/ch/home.jsp?dataserno=202611050003&dtable=News&id=96&mcustomize=news_view.jsp&parentpath=0%2C2",
+      "summary": "為持續深化金融業淨零轉型動能、發揮引導產業減碳之關鍵影響力，金融監督管理委員會（以下簡稱金管會）會同財團法人台灣金融研訓院（以下簡稱金研院）、財團法人中華民國證券暨期貨市場發展基金會（以下簡稱證基會）及財團法人保險事業發展中心（以下簡稱保發中心）協助，於今（5）日公布第五屆（116年度）永續金融評鑑指標，期透過實務導向之指標設計，引導金融機構精進永續風險管理、深化與客戶之實質議合機制，並擴大資金支持產業低碳轉型，加速邁向我國 2050 淨零排放目標。 金管會表示，為使指標具辨別度及評鑑效益，已召開3場專家諮詢閉門會議及受評業者公聽會，並於參考專家及受評機構意見、國內外永續發展趨勢、ESG評鑑指標及第四屆永續金融評鑑指標得分情形，最後由評鑑委員會共同決定第五屆指標。第五屆評鑑作業方式及評分程序等，係延續第四屆辦理方式，受評機構預計有32家銀行、22家證券商、17家投信業者，以及12家產險及12家壽險業者，合計95家；較第四屆減少2家，係扣除合併後於本屆評鑑期間已不存在之銀行，其餘業別家數不變。第五屆與第四屆評鑑不同之處包括：（詳附件─第五屆永續金融評鑑說明） 一、新興永續發展政策及外界關注議題納入第五屆評鑑指標：新增參考國際財務報導準則第S2號（IFRS S2）架構揭露氣候相關資訊、鼓勵企業取得綠色證券標章或循環標誌、提供氣候調適相關金融服務、將金融回饋納入中長期經營策略、提供無障礙",
+      "importance": "依 ESG／GHG／MRV 關鍵字自動篩選；不代表重大政策判定。",
+      "taiwan_impact": "適用對象、義務及政策狀態請參閱原文並人工確認。",
+      "effective_date": null,
+      "reviewed": false
+    },
     {
       "title": "循環經濟產業對話：產品數位護照試運行與生命週期評估",
       "announcement_date": "2026-11-02",
@@ -49,22 +63,6 @@
       "reviewed": false,
       "id": "11165ccc2543b84f816c",
       "collection_method": "由 Codex 於 2026-11-04 使用網頁檢索讀取官方原文並摘要補充；並非人工法律查證，也不是 Python 自動擷取成功。"
-    },
-    {
-      "title": "首件碳封存地質探勘計畫通過，尚非封存核准",
-      "announcement_date": "2026-10-30",
-      "status": "unverified",
-      "status_hint": "官方新聞述及探勘計畫通過；不是二氧化碳灌注或封存許可",
-      "source_title": "環境部氣候變遷署｜碳封存地質探勘",
-      "source_url": "https://enews.moenv.gov.tw/moenv-news/zh-tw/News/14390",
-      "summary": "環境部新聞指出，10月29日同意台塑石化麥寮地區的碳封存地質探勘計畫。探勘將取得儲集層、蓋層及潛在洩漏通道的實測資料；後續仍須依規定辦理環評，再申請封存核准。新聞亦明確說明不得進行二氧化碳灌注測試。",
-      "importance": "探勘同意與正式封存核准是不同階段；評估 CCS 進度時應分別追蹤。",
-      "taiwan_impact": "相關事業可留意場址基線、監測設計、資訊公開與後續環評程序，不能把這則新聞解讀為已可商業封存。",
-      "concepts": "CCS 是二氧化碳捕捉與封存。MRV 需要有可追溯的監測與報告資料，不能只依計畫名稱宣稱減量成果。",
-      "effective_date": null,
-      "reviewed": false,
-      "id": "8f0ab0df207046b7c5e1",
-      "collection_method": "由 Codex 於 2026-11-04 使用網頁檢索讀取官方原文並摘要補充；並非人工法律查證，也不是 Python 自動擷取成功。"
     }
   ],
   "coverage": [
@@ -73,9 +71,9 @@
       "name": "金管會新聞稿",
       "url": "https://www.fsc.gov.tw/RSS/Messages?serno=201202290009&language=chinese",
       "status": "ok",
-      "entries": 603,
+      "entries": 604,
       "rejected": 0,
-      "sha256": "e5723a85c26ef36e8abdfbdb62b63e292b09ec367f9e542698bc81cb5dfff323"
+      "sha256": "5191a750f17c0414e04bab6e187e22794d47eed11b33eafbaad3ad894fa66b3c"
     },
     {
       "id": "fsc-law",
@@ -97,7 +95,7 @@
       "id": "manual-supplement",
       "name": "官方原文網頁補充",
       "status": "supplement",
-      "entries": 4,
+      "entries": 3,
       "note": "由 Codex 於 2026-11-04 使用網頁檢索讀取官方原文並摘要補充；並非人工法律查證，也不是 Python 自動擷取成功。"
     }
   ],
